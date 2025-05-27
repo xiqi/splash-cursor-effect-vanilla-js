@@ -1,5 +1,5 @@
 # Splash Cursor effect - a vanilla JS port
-![Splash Cursor](https://xiqi.github.io/splash-cursor-effect-vanilla-js/demo/splash_demo.gif){ .image25percent }
+![Splash Cursor](https://xiqi.github.io/splash-cursor-effect-vanilla-js/demo/demo.png)
 
 ## Demo
 
