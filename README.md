@@ -10,3 +10,7 @@ https://xiqi.github.io/splash-cursor-effect-vanilla-js/demo/
 <script src="splashCursor.js" defer></script>
 ```
 3. Done
+
+# Attribution
+
+Derived from ReactBits: https://www.reactbits.dev/animations/splash-cursor
