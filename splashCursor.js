@@ -757,6 +757,8 @@
     initFramebuffers();
     let lastUpdateTime = Date.now();
     let colorUpdateTimer = 0.0;
+    let animationHandle = null;
+    let hasInteracted = false;
 
     function updateFrame() {
       const dt = calcDeltaTime();
@@ -765,7 +767,21 @@
       applyInputs();
       step(dt);
       render(null);
-      requestAnimationFrame(updateFrame);
+      animationHandle = requestAnimationFrame(updateFrame);
+    }
+
+    function startAnimation() {
+      if (animationHandle == null) {
+        lastUpdateTime = Date.now();
+        animationHandle = requestAnimationFrame(updateFrame);
+      }
+    }
+
+    function stopAnimation() {
+      if (animationHandle != null) {
+        cancelAnimationFrame(animationHandle);
+        animationHandle = null;
+      }
     }
 
     function calcDeltaTime() {
@@ -1099,6 +1115,8 @@
       let pointer = pointers[0];
       let posX = scaleByPixelRatio(e.clientX);
       let posY = scaleByPixelRatio(e.clientY);
+      hasInteracted = true;
+      startAnimation();
       updatePointerDownData(pointer, -1, posX, posY);
       clickSplat(pointer);
     });
@@ -1108,7 +1126,8 @@
       let posX = scaleByPixelRatio(e.clientX);
       let posY = scaleByPixelRatio(e.clientY);
       let color = generateColor();
-      updateFrame();
+      hasInteracted = true;
+      startAnimation();
       updatePointerMoveData(pointer, posX, posY, color);
       document.body.removeEventListener('mousemove', handleFirstMouseMove);
     });
@@ -1127,7 +1146,8 @@
       for (let i = 0; i < touches.length; i++) {
         let posX = scaleByPixelRatio(touches[i].clientX);
         let posY = scaleByPixelRatio(touches[i].clientY);
-        updateFrame();
+        hasInteracted = true;
+        startAnimation();
         updatePointerDownData(pointer, touches[i].identifier, posX, posY);
       }
       document.body.removeEventListener('touchstart', handleFirstTouchStart);
@@ -1136,6 +1156,8 @@
     window.addEventListener('touchstart', (e) => {
       const touches = e.targetTouches;
       let pointer = pointers[0];
+      hasInteracted = true;
+      startAnimation();
       for (let i = 0; i < touches.length; i++) {
         let posX = scaleByPixelRatio(touches[i].clientX);
         let posY = scaleByPixelRatio(touches[i].clientY);
@@ -1165,6 +1187,12 @@
       }
     });
 
-    updateFrame();
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopAnimation();
+      } else if (hasInteracted) {
+        startAnimation();
+      }
+    });
   });
 })();
